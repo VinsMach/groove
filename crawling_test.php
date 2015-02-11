@@ -1,8 +1,7 @@
 
 <?php
 $csv = new arrayToCsv();
-$arr_intestazione = array(array("desc_home","IMG","prezzo_da","content","luogo","nome_te","nome_evento","orario_inizio","data_inizio","data_fine","prezzo","link"),array());
-
+$arr_intestazione = 
 $file = './report.csv';
 $current = file_get_contents($file);
 $current_txt = $csv->convert($arr_intestazione);
@@ -65,10 +64,8 @@ function source_crawling($link){
 
  	$xpath = new DOMXPath($dom);
  	$scores = array();
- 	$tableRows = $xpath->query('//tr[contains(@class,"line")]');
- 	$next_page = "";
+ 		$next_page = "";
 
- 	$node_page = $xpath->query("//ul[contains(@class,'footerPager')]/li[contains(@class,'current')]/following-sibling::*[1]/a[contains(text(),'2')]/@href");
  	
  	if($node_page->item(0)){
  		$next_page=$node_page->item(0)->nodeValue;
@@ -81,8 +78,7 @@ function source_crawling($link){
     	$match = array();
 	
 		$img = "";
-		$nodelist = $xpath->query('td[contains(@class,"taImage")]//img/@src', $row); // find your image
-	
+		
 		if($nodelist->item(0)); // gets the 1st image
 		$img = $nodelist->item(0)->nodeValue;
 	
@@ -90,11 +86,6 @@ function source_crawling($link){
 			$match['IMG'] ="".$img;
 		}
 	
-		$match['titolo'] = $xpath->query('td//a', $row)->item(1)->getAttribute('title');
-		$match['data'] = trim($xpath->query('td//dl', $row)->item(0)->textContent);
-		$match['contenuto'] = trim($xpath->query('td[contains(@class,"taCommunity")]//p', $row)->item(0)->textContent);
-		$match['prezzo'] = substr(trim($xpath->query('td[contains(@class,"taPrice")]//dt', $row)->item(1)->textContent),strpos(trim($xpath->query('td[contains(@class,"taPrice")]//dt', $row)->item(1)->textContent),'€'));
-		$match['URL'] = "".$xpath->query('td//a', $row)->item(1)->getAttribute('href');
 		$fin_array=source_crawling_link($match);
 		//$scores[] = $match;
 		
@@ -132,11 +123,7 @@ function source_crawling_link($arr_list){
 
  	$xpath = new DOMXPath($dom);
 	$scores = array();
-	$tableRows = $xpath->query('//tr[contains(@valign,"middle")]');
-	$cont2= trim($xpath->query("//div[contains(@class,'eveJs') and not(contains(@class,'defBox'))]/text()[2]", $row)->item(0)->nodeValue);
-	$cont1= trim($xpath->query("//div[contains(@class,'eveJs') and not(contains(@class,'defBox'))]/text()[1]", $row)->item(0)->nodeValue);
-	$cont3= trim($xpath->query("//div[contains(@class,'eveJs') and not(contains(@class,'defBox'))]/text()[3]", $row)->item(0)->nodeValue);
-
+	
   	download_image(str_replace("60x60","222x222",trim($arr_list['IMG'])),str_replace(" ","-",trim($arr_list['titolo'])).".jpg");
  	
  	foreach ($tableRows as $row) {
@@ -149,15 +136,6 @@ function source_crawling_link($arr_list){
 	
 		$title_app=explode("-", trim($arr_list['titolo']));
 		$match['conten_desc']  = trim($cont1 ." " . $cont2 . " ".$cont3);
-		$match['luogo'] = trim($xpath->query('td[contains(@class,"col-location")]/span/text()[1]', $row)->item(0)->nodeValue);
-		$match['teatro'] = trim($xpath->query('td[contains(@class,"col-location")]/span/text()[2]', $row)->item(0)->nodeValue);
-		$match['Nome_Evento']	= trim($title_app[0]).' '.$match['teatro']. ' '.  $match['luogo'];
-		$match['orario'] = trim($xpath->query('td[contains(@class,"col-date")]//text()[2]', $row)->item(0)->nodeValue);
-		$data = trim(strstr(trim($xpath->query('td[contains(@class,"col-date")]//text()[1]', $row)->item(0)->nodeValue),' '));
-		$data_app =explode("/", $data);
-		$match['data_inizio']  = "20".$data_app[2].'-'.$data_app[1].'-'.$data_app[0];
-		$match['data_fine'] = "20".$data_app[2].'-'.$data_app[1].'-'.$data_app[0];
-		$match['prezzo'] = trim(strstr(trim($xpath->query("td[contains(@class,'col-date')]/following-sibling::td[1]//span/text()", $row)->item(0)->nodeValue),' '));
 		
 		$scores[] = $match;
 		//$fin_array_2=$match;
